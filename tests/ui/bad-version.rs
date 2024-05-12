@@ -1,7 +1,7 @@
-#[rustversion::stable(nightly)]
+#[rustversion_msrv::stable(nightly)]
 struct S;
 
-#[rustversion::any(stable(nightly))]
+#[rustversion_msrv::any(stable(nightly))]
 struct S;
 
 fn main() {}

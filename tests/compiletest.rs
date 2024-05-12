@@ -1,4 +1,4 @@
-#[rustversion::attr(not(nightly), ignore)]
+#[rustversion_msrv::attr(not(nightly), ignore)]
 #[cfg_attr(miri, ignore)]
 #[test]
 fn ui() {

@@ -1,5 +1,5 @@
 error: only allowed on a fn item
- --> tests/ui/const-not-fn.rs:1:28
+ --> tests/ui/const-not-fn.rs:1:33
   |
-1 | #[rustversion::attr(all(), const)]
-  |                            ^^^^^
+1 | #[rustversion_msrv::attr(all(), const)]
+  |                                 ^^^^^

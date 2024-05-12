@@ -1,14 +1,16 @@
 [package]
-name = "rustversion"
-version = "1.0.16"
-authors = ["David Tolnay <dtolnay@gmail.com>"]
+name = "rustversion-msrv"
+version = "0.99.16"
+authors = [
+    "David Tolnay <dtolnay@gmail.com>",
+    "Rob Ede <robjtede@icloud.com>",
+]
 build = "build/build.rs"
 categories = ["development-tools::build-utils", "no-std", "no-std::no-alloc"]
-description = "Conditional compilation according to rustc compiler version"
-documentation = "https://docs.rs/rustversion"
+description = "Conditional compilation according to rustc compiler version + MSRV support"
 edition = "2018"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/dtolnay/rustversion"
+repository = "https://github.com/robjtede/rustversion-msrv"
 rust-version = "1.31"
 
 [lib]

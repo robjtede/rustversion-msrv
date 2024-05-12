@@ -1,7 +1,7 @@
-#[rustversion::any(not)]
+#[rustversion_msrv::any(not)]
 struct S;
 
-#[rustversion::any(not, not)]
+#[rustversion_msrv::any(not, not)]
 struct S;
 
 fn main() {}

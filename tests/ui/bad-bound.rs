@@ -1,7 +1,7 @@
-#[rustversion::since(stable)]
+#[rustversion_msrv::since(stable)]
 struct S;
 
-#[rustversion::any(since(stable))]
+#[rustversion_msrv::any(since(stable))]
 struct S;
 
 fn main() {}

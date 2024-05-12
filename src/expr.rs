@@ -1,3 +1,5 @@
+use std::env;
+
 use crate::bound::{self, Bound};
 use crate::date::{self, Date};
 use crate::error::{Error, Result};
@@ -33,10 +35,9 @@ impl Expr {
                 Channel::Stable | Channel::Beta => false,
             },
             Msrv => {
-                #[allow(clippy::option_env_unwrap)]
-                let mut cargo_rust_version = option_env!("CARGO_PKG_RUST_VERSION")
-                    .expect("manifest should specify a rust-version to use the msrv macro")
-                    .splitn(3, '.');
+                let cargo_rust_version = env::var("CARGO_PKG_RUST_VERSION")
+                    .expect("manifest should specify a rust-version to use the msrv macro");
+                let mut cargo_rust_version = cargo_rust_version.splitn(3, '.');
 
                 let _maj = cargo_rust_version.next().unwrap();
                 let min = cargo_rust_version.next().unwrap().parse().unwrap();

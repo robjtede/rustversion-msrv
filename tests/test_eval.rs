@@ -1,4 +1,4 @@
-#[rustversion::any(
+#[rustversion_msrv::any(
     stable,
     stable(1.34),
     stable(1.34.0),
