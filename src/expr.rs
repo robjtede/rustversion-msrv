@@ -43,8 +43,7 @@ impl Expr {
                 let min = cargo_rust_version.next().unwrap().parse().unwrap();
                 let patch = cargo_rust_version
                     .next()
-                    .map(|val| val.parse().unwrap())
-                    .unwrap_or(0);
+                    .map_or(0, |val| val.parse().unwrap());
 
                 rustc.channel == Channel::Stable && rustc.minor == min && rustc.patch >= patch
             }
