@@ -1,9 +1,9 @@
 name: CI
 
 on:
-  push:
   pull_request:
-  workflow_dispatch:
+  merge_group: { types: [checks_requested] }
+  push: { branches: [master] }
   schedule: [cron: "40 1 * * *"]
 
 permissions:
@@ -13,13 +13,8 @@ env:
   RUSTFLAGS: -Dwarnings
 
 jobs:
-  pre_ci:
-    uses: dtolnay/.github/.github/workflows/pre_ci.yml@master
-
   test:
     name: Rust ${{matrix.rust}}
-    needs: pre_ci
-    if: needs.pre_ci.outputs.continue
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -30,7 +25,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: ${{matrix.rust}}
+          toolchain: ${{ matrix.rust }}
       - name: Enable type layout randomization
         run: echo RUSTFLAGS=${RUSTFLAGS}\ -Zrandomize-layout >> $GITHUB_ENV
         if: matrix.rust == 'nightly'
@@ -38,8 +33,6 @@ jobs:
 
   msrv:
     name: Rust 1.31.0
-    needs: pre_ci
-    if: needs.pre_ci.outputs.continue
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -49,8 +42,6 @@ jobs:
 
   doc:
     name: Documentation
-    needs: pre_ci
-    if: needs.pre_ci.outputs.continue
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
@@ -72,8 +63,6 @@ jobs:
 
   miri:
     name: Miri
-    needs: pre_ci
-    if: needs.pre_ci.outputs.continue
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:

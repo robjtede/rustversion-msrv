@@ -1,10 +1,9 @@
-Compiler version cfg
-====================
+# Compiler version cfg
 
-[<img alt="github" src="https://img.shields.io/badge/github-dtolnay/rustversion-8da0cb?style=for-the-badge&labelColor=555555&logo=github" height="20">](https://github.com/dtolnay/rustversion)
-[<img alt="crates.io" src="https://img.shields.io/crates/v/rustversion.svg?style=for-the-badge&color=fc8d62&logo=rust" height="20">](https://crates.io/crates/rustversion)
-[<img alt="docs.rs" src="https://img.shields.io/badge/docs.rs-rustversion-66c2a5?style=for-the-badge&labelColor=555555&logo=docs.rs" height="20">](https://docs.rs/rustversion)
-[<img alt="build status" src="https://img.shields.io/github/actions/workflow/status/dtolnay/rustversion/ci.yml?branch=master&style=for-the-badge" height="20">](https://github.com/dtolnay/rustversion/actions?query=branch%3Amaster)
+[<img alt="github" src="https://img.shields.io/badge/github-robjtede/rustversion-msrv-8da0cb?style=for-the-badge&labelColor=555555&logo=github" height="20">](https://github.com/robjtede/rustversion-msrv)
+[<img alt="crates.io" src="https://img.shields.io/crates/v/rustversion-msrv.svg?style=for-the-badge&color=fc8d62&logo=rust" height="20">](https://crates.io/crates/rustversion-msrv)
+[<img alt="docs.rs" src="https://img.shields.io/badge/docs.rs-rustversion-msrv-66c2a5?style=for-the-badge&labelColor=555555&logo=docs.rs" height="20">](https://docs.rs/rustversion-msrv)
+[<img alt="build status" src="https://img.shields.io/github/actions/workflow/status/robjtede/rustversion-msrv/ci.yml?branch=master&style=for-the-badge" height="20">](https://github.com/robjtede/rustversion-msrv/actions?query=branch%3Amaster)
 
 This crate provides macros for conditional compilation according to rustc
 compiler version, analogous to [`#[cfg(...)]`][cfg] and
@@ -15,61 +14,65 @@ compiler version, analogous to [`#[cfg(...)]`][cfg] and
 
 ```toml
 [dependencies]
-rustversion = "1.0"
+rustversion-msrv = "1.0"
 ```
 
 <br>
 
 ## Selectors
 
-- <b>`#[rustversion::stable]`</b>
+- <b>`#[rustversion_msrv::stable]`</b>
   —<br>
   True on any stable compiler.
 
-- <b>`#[rustversion::stable(1.34)]`</b>
+- <b>`#[rustversion_msrv::stable(1.34)]`</b>
   —<br>
   True on exactly the specified stable compiler.
 
-- <b>`#[rustversion::beta]`</b>
+- <b>`#[rustversion_msrv::beta]`</b>
   —<br>
   True on any beta compiler.
 
-- <b>`#[rustversion::nightly]`</b>
+- <b>`#[rustversion_msrv::nightly]`</b>
   —<br>
   True on any nightly compiler or dev build.
 
-- <b>`#[rustversion::nightly(2019-01-01)]`</b>
+- <b>`#[rustversion_msrv::msrv]`</b>
+  —<br>
+  True on the call-site crate's `rust-version` field (a.k.a, its minimum supported Rust version).
+
+- <b>`#[rustversion_msrv::nightly(2019-01-01)]`</b>
   —<br>
   True on exactly one nightly.
 
-- <b>`#[rustversion::since(1.34)]`</b>
+- <b>`#[rustversion_msrv::since(1.34)]`</b>
   —<br>
   True on that stable release and any later compiler, including beta and
   nightly.
 
-- <b>`#[rustversion::since(2019-01-01)]`</b>
+- <b>`#[rustversion_msrv::since(2019-01-01)]`</b>
   —<br>
   True on that nightly and all newer ones.
 
-- <b>`#[rustversion::before(`</b><i>version or date</i><b>`)]`</b>
+- <b>`#[rustversion_msrv::before(`</b><i>version or date</i><b>`)]`</b>
   —<br>
-  Negative of *#[rustversion::since(...)]*.
+  Negative of _#[rustversion_msrv::since(...)]_.
 
-- <b>`#[rustversion::not(`</b><i>selector</i><b>`)]`</b>
+- <b>`#[rustversion_msrv::not(`</b><i>selector</i><b>`)]`</b>
   —<br>
-  Negative of any selector; for example *#[rustversion::not(nightly)]*.
+  Negative of any selector; for example _#[rustversion_msrv::not(nightly)]_.
 
-- <b>`#[rustversion::any(`</b><i>selectors...</i><b>`)]`</b>
+- <b>`#[rustversion_msrv::any(`</b><i>selectors...</i><b>`)]`</b>
   —<br>
   True if any of the comma-separated selectors is true; for example
-  *#[rustversion::any(stable, beta)]*.
+  _#[rustversion_msrv::any(stable, beta)]_.
 
-- <b>`#[rustversion::all(`</b><i>selectors...</i><b>`)]`</b>
+- <b>`#[rustversion_msrv::all(`</b><i>selectors...</i><b>`)]`</b>
   —<br>
   True if all of the comma-separated selectors are true; for example
-  *#[rustversion::all(since(1.31), before(1.34))]*.
+  _#[rustversion_msrv::all(since(1.31), before(1.34))]_.
 
-- <b>`#[rustversion::attr(`</b><i>selector</i><b>`, `</b><i>attribute</i><b>`)]`</b>
+- <b>`#[rustversion_msrv::attr(`</b><i>selector</i><b>`, `</b><i>attribute</i><b>`)]`</b>
   —<br>
   For conditional inclusion of attributes; analogous to `cfg_attr`.
 
@@ -84,10 +87,10 @@ stabilized in [Rust 1.33][pin]:
 [pin]: https://blog.rust-lang.org/2019/02/28/Rust-1.33.0.html#pinning
 
 ```rust
-#[rustversion::since(1.33)]
+#[rustversion_msrv::since(1.33)]
 use std::pin::Pin;
 
-#[rustversion::since(1.33)]
+#[rustversion_msrv::since(1.33)]
 impl<P: MyTrait> MyTrait for Pin<P> {
     /* ... */
 }
@@ -99,8 +102,8 @@ Similar but for language features; the ability to control alignment greater than
 [packed]: https://github.com/rust-lang/rust/blob/master/RELEASES.md#version-1330-2019-02-28
 
 ```rust
-#[rustversion::attr(before(1.33), repr(packed))]
-#[rustversion::attr(since(1.33), repr(packed(2)))]
+#[rustversion_msrv::attr(before(1.33), repr(packed))]
+#[rustversion_msrv::attr(since(1.33), repr(packed(2)))]
 struct Six(i16, i32);
 
 fn main() {
@@ -110,12 +113,12 @@ fn main() {
 
 Augmenting code with `const` as const impls are stabilized in the standard
 library. This use of `const` as an attribute is recognized as a special case by
-the rustversion::attr macro.
+the rustversion_msrv::attr macro.
 
 ```rust
 use std::time::Duration;
 
-#[rustversion::attr(since(1.32), const)]
+#[rustversion_msrv::attr(since(1.32), const)]
 fn duration_as_days(dur: Duration) -> u64 {
     dur.as_secs() / 60 / 60 / 24
 }
