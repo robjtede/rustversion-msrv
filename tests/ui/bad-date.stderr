@@ -1,10 +1,10 @@
-error: expected nightly date, like 2024-05-12
+error: expected nightly date, like 2020-02-25
  --> tests/ui/bad-date.rs:1:29
   |
 1 | #[rustversion_msrv::nightly(stable)]
   |                             ^^^^^^
 
-error: expected nightly date, like 2024-05-12
+error: expected nightly date, like 2020-02-25
  --> tests/ui/bad-date.rs:4:33
   |
 4 | #[rustversion_msrv::any(nightly(stable))]

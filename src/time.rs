@@ -23,7 +23,7 @@ pub fn today() -> Date {
 
 fn try_today() -> Option<Date> {
     if let Some(pkg_name) = env::var_os("CARGO_PKG_NAME") {
-        if pkg_name.to_str() == Some("rustversion-tests") {
+        if pkg_name.to_str() == Some("rustversion-msrv-tests") {
             return None; // Stable date for ui testing.
         }
     }
