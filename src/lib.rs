@@ -101,6 +101,20 @@
 //!
 //! # Use cases
 //!
+//! The motivating use case for the `msrv` macro added by this crate is to ensure a
+//! stable compiler error output when running negative trybuild tests. Guarding your
+//! test function like this means you only need to update the .stderr files when you
+//! bump your MSRV, not (potentially) every stable release (or worse). Of course, try
+//! make sure that your CI is actually running an MSRV job in its set.
+//!
+//! ```rust
+//! #[rustversion_msrv::msrv]
+//! #[test]
+//! fn trybuild() {
+//!    // ...
+//! }
+//! ```
+//!
 //! Providing additional trait impls as types are stabilized in the standard library
 //! without breaking compatibility with older compilers; in this case Pin\<P\>
 //! stabilized in [Rust 1.33][pin]:
