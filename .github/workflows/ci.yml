@@ -46,7 +46,6 @@ jobs:
           cargo update -p=trybuild --precise=1.0.89
 
       - run: cargo test --test=msrv
-        continue-on-error: ${{ matrix.rust.expect_failure }}
 
       - if: ${{ failure() != matrix.rust.expect_failure }}
         run: |
