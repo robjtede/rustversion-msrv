@@ -42,17 +42,16 @@ jobs:
         run: echo RUSTFLAGS=${RUSTFLAGS}\ -Zrandomize-layout >> $GITHUB_ENV
         if: matrix.rust.toolchain == 'nightly'
 
+      - run: |
+          cargo update -p=trybuild --precise=1.0.89
+
       - run: cargo test --test=msrv
         continue-on-error: ${{ matrix.rust.expect_failure }}
 
-      - if: ${{ matrix.rust.expect_failure }} && ${{ success() }}
+      - if: ${{ success() != matrix.rust.expect_failure }}
         run: |
-          echo "Expected failure, but got success!"
-          exit 1
-
-      - if: ${{ !matrix.rust.expect_failure }} && ${{ failure() }}
-        run: |
-          echo "Expected success, but got failure!"
+          echo Expected failure? ${{ matrix.rust.expect_failure }}
+          echo Execution failed? ${{ !matrix.rust.expect_failure }}
           exit 1
 
   doc:
