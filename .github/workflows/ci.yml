@@ -46,11 +46,12 @@ jobs:
           cargo update -p=trybuild --precise=1.0.89
 
       - run: cargo test --test=msrv
+        continue-on-error: ${{ matrix.rust.expect_failure }}
 
       - if: ${{ failure() != matrix.rust.expect_failure }}
         run: |
-          echo Expected failure? ${{ matrix.rust.expect_failure }}
           echo Execution failed? ${{ !matrix.rust.expect_failure }}
+          echo Expected failure? ${{ matrix.rust.expect_failure }}
           exit 1
 
   doc:
