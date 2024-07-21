@@ -15,7 +15,7 @@ jobs:
     uses: actions-rust-lang/msrv/.github/workflows/msrv.yml@v0.1.0
 
   test:
-    name: Test Rust (${{ matrix.rust.toolchain }})
+    name: Test Rust (${{ matrix.rust.name }})
 
     needs: read_msrv
     runs-on: ubuntu-latest
@@ -25,10 +25,10 @@ jobs:
       matrix:
         # prettier-ignore
         rust:
-          - { toolchain: nightly, expect_failure: true }
-          - { toolchain: beta, expect_failure: true }
-          - { toolchain: stable, expect_failure: true }
-          - { toolchain: "${{ needs.read_msrv.outputs.msrv }}", expect_failure: false }
+          - { name: nightly, toolchain: nightly, expect_failure: true }
+          - { name: beta, toolchain: beta, expect_failure: true }
+          - { name: stable, toolchain: stable, expect_failure: true }
+          - { name: msrv, toolchain: "${{ needs.read_msrv.outputs.msrv }}", expect_failure: false }
 
     steps:
       - uses: actions/checkout@v4
