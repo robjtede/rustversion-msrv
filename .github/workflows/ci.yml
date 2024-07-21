@@ -45,12 +45,12 @@ jobs:
       - run: cargo test --test=msrv
         continue-on-error: ${{ matrix.rust.expect_failure }}
 
-      - if: matrix.rust.expect_failure && failure()
+      - if: ${{ matrix.rust.expect_failure }} && ${{ success() }}
         run: |
           echo "Expected failure, but got success!"
           exit 1
 
-      - if: !matrix.rust.expect_failure && success()
+      - if: ${{ !matrix.rust.expect_failure }} && ${{ failure() }}
         run: |
           echo "Expected success, but got failure!"
           exit 1
