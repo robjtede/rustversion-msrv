@@ -1,21 +1,20 @@
-#[rustversion_msrv::any(
-    stable,
-    stable(1.34),
-    stable(1.34.0),
-    beta,
-    msrv,
-    nightly,
-    nightly(2020-02-25),
-    since(1.34),
-    since(2020-02-25),
-    before(1.34),
-    before(2020-02-25),
-    not(nightly),
-    all(stable, beta, nightly),
-)]
-fn success() {}
+mod always {
+    pub(super) fn success() {
+        panic!("not MSRV")
+    }
+}
 
+mod sometimes {
+    #[rustversion_msrv::msrv]
+    pub(super) fn success() {
+        // is MSRV
+    }
+}
+
+#[allow(unused_imports)]
 #[test]
 fn test() {
+    use self::{always::*, sometimes::*};
+
     success();
 }

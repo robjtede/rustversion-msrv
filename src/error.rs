@@ -1,6 +1,6 @@
+use std::{fmt::Display, iter::FromIterator};
+
 use proc_macro::{Delimiter, Group, Ident, Literal, Punct, Spacing, Span, TokenStream, TokenTree};
-use std::fmt::Display;
-use std::iter::FromIterator;
 
 pub type Result<T, E = Error> = std::result::Result<T, E>;
 
@@ -21,14 +21,6 @@ impl Error {
             end,
             msg: msg.to_string(),
         }
-    }
-
-    pub fn group(group: Group, msg: impl Display) -> Self {
-        let mut iter = group.stream().into_iter();
-        let delimiter = group.span();
-        let begin = iter.next().map_or(delimiter, |t| t.span());
-        let end = iter.last().map_or(begin, |t| t.span());
-        Self::new2(begin, end, msg)
     }
 
     pub fn into_compile_error(self) -> TokenStream {

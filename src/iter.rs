@@ -14,13 +14,6 @@ pub fn new(tokens: TokenStream) -> IterImpl {
     }
 }
 
-impl IterImpl {
-    pub fn peek(&mut self) -> Option<&TokenTree> {
-        self.peeked = self.next();
-        self.peeked.as_ref()
-    }
-}
-
 impl Iterator for IterImpl {
     type Item = TokenTree;
 

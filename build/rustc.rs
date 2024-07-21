@@ -1,5 +1,6 @@
-use self::Channel::*;
 use std::fmt::{self, Debug};
+
+use self::Channel::*;
 
 pub enum ParseResult {
     Success(Version),
@@ -18,7 +19,7 @@ pub struct Version {
 pub enum Channel {
     Stable,
     Beta,
-    Nightly(Date),
+    Nightly,
     Dev,
 }
 
@@ -64,11 +65,11 @@ fn parse_words(words: &mut dyn Iterator<Item = &str>) -> Option<Version> {
                 None if hash.ends_with(')') => Dev,
                 Some(date) if date.ends_with(')') => {
                     let mut date = date[..date.len() - 1].split('-');
-                    let year = date.next()?.parse().ok()?;
-                    let month = date.next()?.parse().ok()?;
-                    let day = date.next()?.parse().ok()?;
+                    let _year: u16 = date.next()?.parse().ok()?;
+                    let _month: u8 = date.next()?.parse().ok()?;
+                    let _day: u8 = date.next()?.parse().ok()?;
                     match date.next() {
-                        None => Nightly(Date { year, month, day }),
+                        None => Nightly,
                         Some(_) => return None,
                     }
                 }
@@ -99,15 +100,12 @@ impl Debug for Version {
 }
 
 impl Debug for Channel {
-    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Channel::Stable => formatter.write_str("crate::version::Channel::Stable"),
-            Channel::Beta => formatter.write_str("crate::version::Channel::Beta"),
-            Channel::Nightly(date) => formatter
-                .debug_tuple("crate::version::Channel::Nightly")
-                .field(date)
-                .finish(),
-            Channel::Dev => formatter.write_str("crate::version::Channel::Dev"),
+            Channel::Stable => f.write_str("crate::version::Channel::Stable"),
+            Channel::Beta => f.write_str("crate::version::Channel::Beta"),
+            Channel::Nightly => f.write_str("crate::version::Channel::Nightly"),
+            Channel::Dev => f.write_str("crate::version::Channel::Dev"),
         }
     }
 }

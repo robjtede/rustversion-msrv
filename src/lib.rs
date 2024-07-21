@@ -1,271 +1,45 @@
-//! [![github]](https://github.com/dtolnay/rustversion)&ensp;[![crates-io]](https://crates.io/crates/rustversion)&ensp;[![docs-rs]](https://docs.rs/rustversion)
-//!
-//! [github]: https://img.shields.io/badge/github-8da0cb?style=for-the-badge&labelColor=555555&logo=github
-//! [crates-io]: https://img.shields.io/badge/crates.io-fc8d62?style=for-the-badge&labelColor=555555&logo=rust
-//! [docs-rs]: https://img.shields.io/badge/docs.rs-66c2a5?style=for-the-badge&labelColor=555555&logo=docs.rs
-//!
-//! <br>
-//!
-//! This crate provides macros for conditional compilation according to rustc
-//! compiler version, analogous to [`#[cfg(...)]`][cfg] and
-//! [`#[cfg_attr(...)]`][cfg_attr].
-//!
-//! [cfg]: https://doc.rust-lang.org/reference/conditional-compilation.html#the-cfg-attribute
-//! [cfg_attr]: https://doc.rust-lang.org/reference/conditional-compilation.html#the-cfg_attr-attribute
-//!
-//! <br>
+//! Conditional compilation according manifest MSRV.
 //!
 //! # Selectors
 //!
-//! - <p style="margin-left:50px;text-indent:-50px">
-//!   <b><code>#[rustversion_msrv::stable]</code></b>
-//!   —<br>
-//!   True on any stable compiler.
-//!   </p>
+//! - `#[rustversion_msrv::msrv]`
+//!   
+//!   True on the **call-site** crate's `rust-version` field, i.e., its minimum supported Rust
+//!   version (MSRV).
 //!
-//! - <p style="margin-left:50px;text-indent:-50px">
-//!   <b><code>#[rustversion_msrv::stable(1.34)]</code></b>
-//!   —<br>
-//!   True on exactly the specified stable compiler.
-//!   </p>
+//! # Use Cases
 //!
-//! - <p style="margin-left:50px;text-indent:-50px">
-//!   <b><code>#[rustversion_msrv::beta]</code></b>
-//!   —<br>
-//!   True on any beta compiler.
-//!   </p>
+//! The motivating use case for the `msrv` macro in this crate is to ensure a stable compiler error
+//! output when running negative trybuild tests. Guarding your test function like this means you
+//! only need to update the .stderr files when you bump your MSRV, not (potentially) every stable
+//! release (or worse). Of course, try make sure that your CI is actually running an MSRV job in its
+//! set.
 //!
-//! - <p style="margin-left:50px;text-indent:-50px">
-//!   <b><code>#[rustversion_msrv::nightly]</code></b>
-//!   —<br>
-//!   True on any nightly compiler or dev build.
-//!   </p>
-//!
-//! - <b>`#[rustversion_msrv::msrv]`</b>
-//!   —<br>
-//!   True on the call-site crate's `rust-version` field (a.k.a, its minimum supported Rust version).
-//!
-//! - <p style="margin-left:50px;text-indent:-50px">
-//!   <b><code>#[rustversion_msrv::nightly(2019-01-01)]</code></b>
-//!   —<br>
-//!   True on exactly one nightly.
-//!   </p>
-//!
-//! - <p style="margin-left:50px;text-indent:-50px">
-//!   <b><code>#[rustversion_msrv::since(1.34)]</code></b>
-//!   —<br>
-//!   True on that stable release and any later compiler, including beta and
-//!   nightly.
-//!   </p>
-//!
-//! - <p style="margin-left:50px;text-indent:-50px">
-//!   <b><code>#[rustversion_msrv::since(2019-01-01)]</code></b>
-//!   —<br>
-//!   True on that nightly and all newer ones.
-//!   </p>
-//!
-//! - <p style="margin-left:50px;text-indent:-50px">
-//!   <b><code>#[rustversion_msrv::before(</code></b><i>version or date</i><b><code>)]</code></b>
-//!   —<br>
-//!   Negative of <i>#[rustversion_msrv::since(...)]</i>.
-//!   </p>
-//!
-//! - <p style="margin-left:50px;text-indent:-50px">
-//!   <b><code>#[rustversion_msrv::not(</code></b><i>selector</i><b><code>)]</code></b>
-//!   —<br>
-//!   Negative of any selector; for example <i>#[rustversion_msrv::not(nightly)]</i>.
-//!   </p>
-//!
-//! - <p style="margin-left:50px;text-indent:-50px">
-//!   <b><code>#[rustversion_msrv::any(</code></b><i>selectors...</i><b><code>)]</code></b>
-//!   —<br>
-//!   True if any of the comma-separated selectors is true; for example
-//!   <i>#[rustversion_msrv::any(stable, beta)]</i>.
-//!   </p>
-//!
-//! - <p style="margin-left:50px;text-indent:-50px">
-//!   <b><code>#[rustversion_msrv::all(</code></b><i>selectors...</i><b><code>)]</code></b>
-//!   —<br>
-//!   True if all of the comma-separated selectors are true; for example
-//!   <i>#[rustversion_msrv::all(since(1.31), before(1.34))]</i>.
-//!   </p>
-//!
-//! - <p style="margin-left:50px;text-indent:-50px">
-//!   <b><code>#[rustversion_msrv::attr(</code></b><i>selector</i><b><code>, </code></b><i>attribute</i><b><code>)]</code></b>
-//!   —<br>
-//!   For conditional inclusion of attributes; analogous to
-//!   <code>cfg_attr</code>.
-//!   </p>
-//!
-//! <br>
-//!
-//! # Use cases
-//!
-//! The motivating use case for the `msrv` macro added by this crate is to ensure a
-//! stable compiler error output when running negative trybuild tests. Guarding your
-//! test function like this means you only need to update the .stderr files when you
-//! bump your MSRV, not (potentially) every stable release (or worse). Of course, try
-//! make sure that your CI is actually running an MSRV job in its set.
-//!
-//! ```rust
+//! ```
 //! #[rustversion_msrv::msrv]
 //! #[test]
 //! fn trybuild() {
 //!    // ...
 //! }
 //! ```
-//!
-//! Providing additional trait impls as types are stabilized in the standard library
-//! without breaking compatibility with older compilers; in this case Pin\<P\>
-//! stabilized in [Rust 1.33][pin]:
-//!
-//! [pin]: https://blog.rust-lang.org/2019/02/28/Rust-1.33.0.html#pinning
-//!
-//! ```
-//! # trait MyTrait {}
-//! #
-//! #[rustversion_msrv::since(1.33)]
-//! use std::pin::Pin;
-//!
-//! #[rustversion_msrv::since(1.33)]
-//! impl<P: MyTrait> MyTrait for Pin<P> {
-//!     /* ... */
-//! }
-//! ```
-//!
-//! Similar but for language features; the ability to control alignment greater than
-//! 1 of packed structs was stabilized in [Rust 1.33][packed].
-//!
-//! [packed]: https://github.com/rust-lang/rust/blob/master/RELEASES.md#version-1330-2019-02-28
-//!
-//! ```
-//! #[rustversion_msrv::attr(before(1.33), repr(packed))]
-//! #[rustversion_msrv::attr(since(1.33), repr(packed(2)))]
-//! struct Six(i16, i32);
-//!
-//! fn main() {
-//!     println!("{}", std::mem::align_of::<Six>());
-//! }
-//! ```
-//!
-//! Augmenting code with `const` as const impls are stabilized in the standard
-//! library. This use of `const` as an attribute is recognized as a special case
-//! by the rustversion_msrv::attr macro.
-//!
-//! ```
-//! use std::time::Duration;
-//!
-//! #[rustversion_msrv::attr(since(1.32), const)]
-//! fn duration_as_days(dur: Duration) -> u64 {
-//!     dur.as_secs() / 60 / 60 / 24
-//! }
-//! ```
-//!
-//! <br>
-
-#![doc(html_root_url = "https://docs.rs/rustversion/1.0.16")]
-#![allow(
-    clippy::cast_lossless,
-    clippy::cast_possible_truncation,
-    clippy::derive_partial_eq_without_eq,
-    clippy::doc_markdown,
-    clippy::enum_glob_use,
-    clippy::from_iter_instead_of_collect,
-    // https://github.com/rust-lang/rust-clippy/issues/8539
-    clippy::iter_with_drain,
-    clippy::module_name_repetitions,
-    clippy::must_use_candidate,
-    clippy::needless_doctest_main,
-    clippy::needless_pass_by_value,
-    clippy::redundant_else,
-    clippy::toplevel_ref_arg,
-    clippy::unreadable_literal
-)]
 
 extern crate proc_macro;
 
-mod attr;
-mod bound;
-mod constfn;
-mod date;
+use proc_macro::TokenStream;
+
 mod error;
 mod expand;
 mod expr;
 mod iter;
 mod release;
-mod time;
 mod token;
 mod version;
 
-use crate::error::Error;
-use crate::version::Version;
-use proc_macro::TokenStream;
+use self::version::Version;
 
-const RUSTVERSION: Version = include!(concat!(env!("OUT_DIR"), "/version.expr"));
-
-#[proc_macro_attribute]
-pub fn stable(args: TokenStream, input: TokenStream) -> TokenStream {
-    expand::cfg("stable", args, input)
-}
-
-#[proc_macro_attribute]
-pub fn beta(args: TokenStream, input: TokenStream) -> TokenStream {
-    expand::cfg("beta", args, input)
-}
-
-#[proc_macro_attribute]
-pub fn nightly(args: TokenStream, input: TokenStream) -> TokenStream {
-    expand::cfg("nightly", args, input)
-}
+const RUST_VERSION: Version = include!(concat!(env!("OUT_DIR"), "/version.expr"));
 
 #[proc_macro_attribute]
 pub fn msrv(args: TokenStream, input: TokenStream) -> TokenStream {
     expand::cfg("msrv", args, input)
-}
-
-#[proc_macro_attribute]
-pub fn since(args: TokenStream, input: TokenStream) -> TokenStream {
-    expand::cfg("since", args, input)
-}
-
-#[proc_macro_attribute]
-pub fn before(args: TokenStream, input: TokenStream) -> TokenStream {
-    expand::cfg("before", args, input)
-}
-
-#[proc_macro_attribute]
-pub fn not(args: TokenStream, input: TokenStream) -> TokenStream {
-    expand::cfg("not", args, input)
-}
-
-#[proc_macro_attribute]
-pub fn any(args: TokenStream, input: TokenStream) -> TokenStream {
-    expand::cfg("any", args, input)
-}
-
-#[proc_macro_attribute]
-pub fn all(args: TokenStream, input: TokenStream) -> TokenStream {
-    expand::cfg("all", args, input)
-}
-
-#[proc_macro_attribute]
-pub fn attr(args: TokenStream, input: TokenStream) -> TokenStream {
-    attr::parse(args)
-        .and_then(|args| expand::try_attr(args, input))
-        .unwrap_or_else(Error::into_compile_error)
-}
-
-#[cfg(not(cfg_macro_not_allowed))]
-#[proc_macro]
-pub fn cfg(input: TokenStream) -> TokenStream {
-    use proc_macro::{Ident, Span, TokenTree};
-    (|| {
-        let ref mut args = iter::new(input);
-        let expr = expr::parse(args)?;
-        token::parse_end(args)?;
-        let boolean = expr.eval(RUSTVERSION);
-        let ident = Ident::new(&boolean.to_string(), Span::call_site());
-        Ok(TokenStream::from(TokenTree::Ident(ident)))
-    })()
-    .unwrap_or_else(Error::into_compile_error)
 }

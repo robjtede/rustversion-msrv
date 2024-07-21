@@ -2,8 +2,9 @@
 
 ## Unreleased
 
-- Add `msrv` macro.
+- Remove all macros except `#[msrv]`.
 
-## 1.0.16
+## 0.99.16
 
+- Add `#[msrv]` macro.
 - Forked from `rustversion` crate.

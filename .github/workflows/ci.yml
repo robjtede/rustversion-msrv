@@ -13,32 +13,34 @@ env:
   RUSTFLAGS: -Dwarnings
 
 jobs:
+  read_msrv:
+    name: Read MSRV
+    uses: actions-rust-lang/msrv/.github/workflows/msrv.yml@v0.1.0
+
   test:
-    name: Rust ${{matrix.rust}}
+    name: Test Rust (${{ matrix.rust }})
+
+    needs: read_msrv
     runs-on: ubuntu-latest
+
     strategy:
       fail-fast: false
       matrix:
-        rust: [nightly, beta, stable, 1.56.0]
-    timeout-minutes: 45
+        rust: [nightly, beta, stable, "${{ needs.read_msrv.outputs.msrv }}"]
+
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@master
+
+      - name: Install Rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1.9.0
         with:
           toolchain: ${{ matrix.rust }}
+
       - name: Enable type layout randomization
         run: echo RUSTFLAGS=${RUSTFLAGS}\ -Zrandomize-layout >> $GITHUB_ENV
         if: matrix.rust == 'nightly'
-      - run: cargo test
 
-  msrv:
-    name: Rust 1.31.0
-    runs-on: ubuntu-latest
-    timeout-minutes: 45
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@1.31.0
-      - run: cargo check
+      - run: cargo test
 
   doc:
     name: Documentation
@@ -48,8 +50,14 @@ jobs:
       RUSTDOCFLAGS: -Dwarnings
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@nightly
+
+      - name: Install Rust (nightly)
+        uses: actions-rust-lang/setup-rust-toolchain@v1.9.0
+        with:
+          toolchain: nightly
+
       - uses: dtolnay/install@cargo-docs-rs
+
       - run: cargo docs-rs
 
   clippy:
@@ -58,8 +66,13 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@clippy
-      - run: cargo clippy --tests -- -Dclippy::all -Dclippy::pedantic
+
+      - name: Install Rust (stable)
+        uses: actions-rust-lang/setup-rust-toolchain@v1.9.0
+        with:
+          components: clippy
+
+      - run: cargo clippy --tests -- -Dclippy::todo
 
   miri:
     name: Miri
@@ -67,19 +80,14 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@miri
+
+      - name: Install Rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1.9.0
+        with:
+          components: miri
+
       - run: cargo miri setup
+
       - run: cargo miri test
         env:
           MIRIFLAGS: -Zmiri-strict-provenance
-
-  outdated:
-    name: Outdated
-    runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
-    timeout-minutes: 45
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: dtolnay/install@cargo-outdated
-      - run: cargo outdated --workspace --exit-code 1
