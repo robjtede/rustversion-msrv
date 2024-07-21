@@ -15,7 +15,7 @@ jobs:
     uses: actions-rust-lang/msrv/.github/workflows/msrv.yml@v0.1.0
 
   test:
-    name: Test Rust (${{ matrix.rust }})
+    name: Test Rust (${{ matrix.rust.toolchain }})
 
     needs: read_msrv
     runs-on: ubuntu-latest
@@ -23,21 +23,37 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        rust: [nightly, beta, stable, "${{ needs.read_msrv.outputs.msrv }}"]
+        # prettier-ignore
+        rust:
+          - { toolchain: nightly, expect_failure: true }
+          - { toolchain: beta, expect_failure: true }
+          - { toolchain: stable, expect_failure: true }
+          - { toolchain: "${{ needs.read_msrv.outputs.msrv }}", expect_failure: false }
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Rust (${{ matrix.rust }})
+      - name: Install Rust (${{ matrix.rust.toolchain }})
         uses: actions-rust-lang/setup-rust-toolchain@v1.9.0
         with:
-          toolchain: ${{ matrix.rust }}
+          toolchain: ${{ matrix.rust.toolchain }}
 
       - name: Enable type layout randomization
         run: echo RUSTFLAGS=${RUSTFLAGS}\ -Zrandomize-layout >> $GITHUB_ENV
-        if: matrix.rust == 'nightly'
+        if: matrix.rust.toolchain == 'nightly'
 
-      - run: cargo test
+      - run: cargo test --test=msrv
+        continue-on-error: ${{ matrix.rust.expect_failure }}
+
+      - if: matrix.rust.expect_failure && failure()
+        run: |
+          echo "Expected failure, but got success!"
+          exit 1
+
+      - if: !matrix.rust.expect_failure && success()
+        run: |
+          echo "Expected success, but got failure!"
+          exit 1
 
   doc:
     name: Documentation
