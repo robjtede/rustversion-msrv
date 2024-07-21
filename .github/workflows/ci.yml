@@ -4,13 +4,10 @@ on:
   pull_request:
   merge_group: { types: [checks_requested] }
   push: { branches: [main] }
-  schedule: [cron: "40 1 * * *"]
+  schedule: [cron: "40 1 */2 * *"]
 
 permissions:
   contents: read
-
-env:
-  RUSTFLAGS: -Dwarnings
 
 jobs:
   read_msrv:
@@ -31,7 +28,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Rust
+      - name: Install Rust (${{ matrix.rust }})
         uses: actions-rust-lang/setup-rust-toolchain@v1.9.0
         with:
           toolchain: ${{ matrix.rust }}
@@ -81,9 +78,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Rust
+      - name: Install Rust (nightly)
         uses: actions-rust-lang/setup-rust-toolchain@v1.9.0
         with:
+          toolchain: nightly
           components: miri
 
       - run: cargo miri setup

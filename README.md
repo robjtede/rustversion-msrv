@@ -4,7 +4,7 @@
 
 [![crates.io](https://img.shields.io/crates/v/rustversion-msrv?label=latest)](https://crates.io/crates/rustversion-msrv)
 [![Documentation](https://docs.rs/rustversion-msrv/badge.svg?version=0.99.16)](https://docs.rs/rustversion-msrv/0.99.16)
-![Version](https://img.shields.io/badge/rustc-1.56+-ab6000.svg)
+![Version](https://img.shields.io/badge/rustc-1.63+-ab6000.svg)
 ![MIT or Apache 2.0 licensed](https://img.shields.io/crates/l/rustversion-msrv.svg)
 <br />
 [![dependency status](https://deps.rs/crate/rustversion-msrv/0.99.16/status.svg)](https://deps.rs/crate/rustversion-msrv/0.99.16)
