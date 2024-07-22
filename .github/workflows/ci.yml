@@ -54,14 +54,17 @@ jobs:
 
           cargo test --test=msrv
 
+          xc="$?"
+          echo "exit code = $xc"
+
           if [[ "$EXPECT_FAILURE" == "true" ]]; then
-            if [[ "$?" == "0" ]]; then
-              echo "Expected failure, got exit code = $?"
+            if [[ "$xc" == "0" ]]; then
+              echo "Expected failure, got exit code = $xc"
               exit 1
             fi
           else
-            if [[ "$?" != "0" ]]; then
-              echo "Expected success, got exit code = $?"
+            if [[ "$xc" != "0" ]]; then
+              echo "Expected success, got exit code = $xc"
               exit 1
             fi
           fi
