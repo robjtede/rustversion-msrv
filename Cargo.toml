@@ -1,6 +1,6 @@
 [package]
 name = "rustversion-msrv"
-version = "0.99.16"
+version = "0.100.0"
 description = "Conditional compilation according manifest MSRV"
 authors = [
     "David Tolnay <dtolnay@gmail.com>",
