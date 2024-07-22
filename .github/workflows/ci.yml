@@ -45,14 +45,26 @@ jobs:
       - run: |
           cargo update -p=trybuild --precise=1.0.89
 
-      - run: cargo test --test=msrv
-        continue-on-error: ${{ matrix.rust.expect_failure }}
-
-      - if: ${{ failure() != matrix.rust.expect_failure }}
+      - name: Test
+        shell: bash
+        env:
+          EXPECT_FAILURE: ${{ matrix.rust.expect_failure }}
         run: |
-          echo Execution failed? ${{ !matrix.rust.expect_failure }}
-          echo Expected failure? ${{ matrix.rust.expect_failure }}
-          exit 1
+          set +e
+
+          cargo test --test=msrv
+
+          if [[ "$EXPECT_FAILURE" == "true" ]]; then
+            if [[ "$?" == "0" ]]; then
+              echo "Expected failure, got exit code = $?"
+              exit 1
+            fi
+          else
+            if [[ "$?" != "0" ]]; then
+              echo "Expected success, got exit code = $?"
+              exit 1
+            fi
+          fi
 
   doc:
     name: Documentation
