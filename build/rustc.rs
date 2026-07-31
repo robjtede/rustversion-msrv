@@ -23,13 +23,6 @@ pub enum Channel {
     Dev,
 }
 
-#[cfg_attr(test, derive(PartialEq))]
-pub struct Date {
-    pub year: u16,
-    pub month: u8,
-    pub day: u8,
-}
-
 pub fn parse(string: &str) -> ParseResult {
     let last_line = string.lines().last().unwrap_or(string);
     let mut words = last_line.trim().split(' ');
@@ -107,16 +100,5 @@ impl Debug for Channel {
             Channel::Nightly => f.write_str("crate::version::Channel::Nightly"),
             Channel::Dev => f.write_str("crate::version::Channel::Dev"),
         }
-    }
-}
-
-impl Debug for Date {
-    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        formatter
-            .debug_struct("crate::date::Date")
-            .field("year", &self.year)
-            .field("month", &self.month)
-            .field("day", &self.day)
-            .finish()
     }
 }
