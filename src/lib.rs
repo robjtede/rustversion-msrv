@@ -31,7 +31,6 @@ mod error;
 mod expand;
 mod expr;
 mod iter;
-mod release;
 mod token;
 mod version;
 

@@ -42,9 +42,6 @@ jobs:
         run: echo RUSTFLAGS=${RUSTFLAGS}\ -Zrandomize-layout >> $GITHUB_ENV
         if: matrix.rust.toolchain == 'nightly'
 
-      - run: |
-          cargo update -p=trybuild --precise=1.0.89
-
       - name: Test
         shell: bash
         env:
@@ -52,7 +49,7 @@ jobs:
         run: |
           set +e
 
-          cargo test --test=msrv
+          cargo --locked test --test=msrv
 
           xc="$?"
           echo "exit code = $xc"
@@ -99,4 +96,4 @@ jobs:
         with:
           components: clippy
 
-      - run: cargo clippy --tests -- -Dclippy::todo
+      - run: cargo --locked clippy --tests -- -Dclippy::todo
