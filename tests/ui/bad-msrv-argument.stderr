@@ -1,0 +1,7 @@
+error: unexpected token
+ --> tests/ui/bad-msrv-argument.rs:1:1
+  |
+1 | #[rustversion_msrv::msrv(unexpected)]
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: this error originates in the attribute macro `rustversion_msrv::msrv` (in Nightly builds, run with -Z macro-backtrace for more info)
