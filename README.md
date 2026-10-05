@@ -3,11 +3,11 @@
 <!-- prettier-ignore-start -->
 
 [![crates.io](https://img.shields.io/crates/v/rustversion-msrv?label=latest)](https://crates.io/crates/rustversion-msrv)
-[![Documentation](https://docs.rs/rustversion-msrv/badge.svg?version=0.100.1)](https://docs.rs/rustversion-msrv/0.100.1)
+[![Documentation](https://docs.rs/rustversion-msrv/badge.svg?version=0.100.2)](https://docs.rs/rustversion-msrv/0.100.2)
 ![Version](https://img.shields.io/badge/rustc-1.63+-ab6000.svg)
 ![MIT or Apache 2.0 licensed](https://img.shields.io/crates/l/rustversion-msrv.svg)
 <br />
-[![dependency status](https://deps.rs/crate/rustversion-msrv/0.100.1/status.svg)](https://deps.rs/crate/rustversion-msrv/0.100.1)
+[![dependency status](https://deps.rs/crate/rustversion-msrv/0.100.2/status.svg)](https://deps.rs/crate/rustversion-msrv/0.100.2)
 ![Download](https://img.shields.io/crates/d/rustversion-msrv.svg)
 
 <!-- prettier-ignore-end -->
