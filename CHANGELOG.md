@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.100.1
+
+- No significant changes since `0.100.0`.
+
 ## 0.100.0
 
 - Remove all macros except `#[msrv]`.
