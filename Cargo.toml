@@ -9,7 +9,7 @@ authors = [
 categories = ["development-tools::build-utils", "no-std", "no-std::no-alloc"]
 repository = "https://github.com/robjtede/rustversion-msrv"
 license = "MIT OR Apache-2.0"
-edition = "2018"
+edition = "2021"
 rust-version = "1.63"
 build = "build/build.rs"
 
